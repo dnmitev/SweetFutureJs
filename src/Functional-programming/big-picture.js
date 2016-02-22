@@ -1,20 +1,6 @@
 (function () {
     "use strict";
 
-    let sum = 0;
-    let numbers = [1, 2, 3, 4, 5];
-    
-    // code below is not currently implemented in the browsers
-    // let iterator = numbers.values();    
-    let iterator = numbers[Symbol.iterator]();
-    let next = iterator.next();
-    while (!next.done) {
-        sum += next.value;
-        next = iterator.next();
-    }
-
-    console.log(`sum = ${sum}`);
-
     class Company {
 
         constructor(name) {
@@ -25,49 +11,51 @@
         addEmployees(...names) {
             this.employees = this.employees.concat(names);
         }
-        
-        [Symbol.iterator]() {
-            return new CompanyIterator(this.employees);
-        }
-    }
-    
-    class CompanyIterator {
-        // can be used a generator function instead
-    
-        constructor(array) {
-            this.array = array;
-            this.index = 0;
-        }
-    
-        next() {
-            // custom logic can be put in here
-            let result = {
-                value: undefined,
-                done: true
-            };
-            
-            if (this.index < this.array.length) {
-                result.value = this.array[this.index];
-                this.index += 1;
+
+        *[Symbol.iterator]() {
+            for (let employee of this.employees) {
+                console.log(`From generator: ${employee}`);
+                yield employee;
             }
-            
-            return result;
         }
-    
     }
+
+    // let filter = function* (items, predicate) {
+    //     for (let item of items) {
+    //         console.log(`--->Filter: ${item}`);
+    //         if (predicate(item)) {
+    //             yield item;
+    //         }
+    //     }
+    // }
+    
+    // let take = function* (items, number) {
+    //     let count = 0;
+    //     if (number < 1) return;
+    //     for (let item of items) {
+    //         yield item;
+    //         count += 1;
+    //         if (count >= number) {
+    //             return
+    //         }
+    //     }
+    // }
 
     let count = 0;
     let company = new Company("Bulpros");
     company.addEmployees("Pesho", "Gosho", "Stamat", "Penka", "Geri");
 
-    for (var key in company) {
-        console.log(company[key]);
+    for (let employee of company) {
+        console.log(employee);
     }
-   
-    // Code below will produce an error because the object person, does not implement its [Symbol.iterator] 
-    for (let index of company) {
-        console.log(index);
-    }
-    
 
+    // for (let employee of filter(company, e => e[0] == 'P')) {
+    //     count += 1;
+    // }
+    
+    // for (let employee of take(filter(company, e => e[0] == 'P'),1)) {
+    //     console.log(`Taken employee: ${employee}`);
+    // }
+
+    console.log(`Employes with name starting with 'P': ${count}`);
 })();
